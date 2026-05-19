@@ -2,12 +2,17 @@
 
 session_start();
 
-require __DIR__ . '/../includes/db.php';
+require __DIR__ . '/../src/Database.php';
+require __DIR__ . '/../src/ResourceRepository.php';
 require __DIR__ . '/../includes/functions.php';
 
-$statement = $pdo->query('SELECT * FROM resources ORDER BY created_at DESC');
-$resources = $statement->fetchAll();
+use App\Database;
+use App\ResourceRepository;
+
+$repo = new ResourceRepository(Database::getInstance());
+$resources = $repo->findAll();
 $flash = get_flash();
+
 ?>
 <!doctype html>
 <html lang="fr">
@@ -42,14 +47,14 @@ $flash = get_flash();
             <tbody>
             <?php foreach ($resources as $resource): ?>
                 <tr>
-                    <td><?= h($resource['title']) ?></td>
-                    <td><?= h($resource['type']) ?></td>
-                    <td><?= h($resource['status']) ?></td>
-                    <td><?= h($resource['borrower'] ?: '-') ?></td>
+                    <td><?= h($resource->title) ?></td>
+                    <td><?= h($resource->type) ?></td>
+                    <td><?= h($resource->status) ?></td>
+                    <td><?= h($resource->borrower ?: '-') ?></td>
                     <td class="actions">
-                        <a href="edit.php?id=<?= (int) $resource['id'] ?>">Modifier</a>
+                        <a href="edit.php?id=<?= (int) $resource->id ?>">Modifier</a>
                         <form method="post" action="delete.php" onsubmit="return confirm('Supprimer cette ressource ?')">
-                            <input type="hidden" name="id" value="<?= (int) $resource['id'] ?>">
+                            <input type="hidden" name="id" value="<?= (int) $resource->id ?>">
                             <button type="submit">Supprimer</button>
                         </form>
                     </td>

@@ -1,12 +1,16 @@
 <?php
 
-namespace src;
+namespace App;
 
+use PDO;
+
+require_once __DIR__ . '/Resource.php';
 class ResourceRepository
 {
     public function __construct(private PDO $pdo) {}
         public function findAll(): array {
             $stmt =$this->pdo->prepare("SELECT * FROM resources ORDER BY created_at DESC");
+            $stmt->execute();
             return array_map(fn(array $r) => Resource::fromArray($r), $stmt->fetchAll());
         }
         public function find(int $id): ?Resource
@@ -27,7 +31,15 @@ class ResourceRepository
             ]);
         }
         public function delete(int $id): bool {
-        $stmt = $this->pdo->prepare("DELETE FROM resources WHERE id = :id");
-        return $stmt->execute(['id' => $id]);
+            $stmt = $this->pdo->prepare("DELETE FROM resources WHERE id = :id");
+            return $stmt->execute(['id' => $id]);
+        }
+
+        public function update(int $id,array $data): void {
+            $stmt = $this->pdo->prepare('
+            UPDATE resources SET title = :title, type = :type, status = :status, borrower = :borrower
+            WHERE id = :id
+            ');
+            $stmt->execute([... $data, 'id' => $id ]);
         }
 }

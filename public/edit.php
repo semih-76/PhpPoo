@@ -2,13 +2,18 @@
 
 session_start();
 
-require __DIR__ . '/../includes/db.php';
+require __DIR__ . '/../src/Database.php';
+require __DIR__ . '/../src/Resource.php';
+require __DIR__ . '/../src/ResourceRepository.php';
 require __DIR__ . '/../includes/functions.php';
 
+use App\Database;
+use App\ResourceRepository;
+
 $id = (int) ($_GET['id'] ?? 0);
-$statement = $pdo->prepare('SELECT * FROM resources WHERE id = :id');
-$statement->execute(['id' => $id]);
-$resource = $statement->fetch();
+
+$repo = new ResourceRepository(Database::getInstance());
+$resource = $repo->find($id);
 
 if (!$resource) {
     set_flash('error', 'Ressource introuvable.');
@@ -33,16 +38,16 @@ $flash = get_flash();
     <?php endif; ?>
 
     <form method="post" action="update.php">
-        <input type="hidden" name="id" value="<?= (int) $resource['id'] ?>">
+        <input type="hidden" name="id" value="<?= (int) $resource->id ?>">
 
         <label>
             Titre
-            <input type="text" name="title" value="<?= h($resource['title']) ?>" required>
+            <input type="text" name="title" value="<?= h($resource->title) ?>" required>
         </label>
 
         <label>
             Type
-            <input type="text" name="type" value="<?= h($resource['type']) ?>" required>
+            <input type="text" name="type" value="<?= h($resource->type) ?>" required>
         </label>
 
         <label>
@@ -50,7 +55,7 @@ $flash = get_flash();
             <select name="status">
                 <?php $statuts = ['disponible' => 'Disponible', 'emprunte' => 'Emprunté', 'maintenance' => 'Maintenance']; ?>
                 <?php foreach ($statuts as $valeur => $libelle): ?>
-                    <option value="<?= h($valeur) ?>" <?= $resource['status'] === $valeur ? 'selected' : '' ?>>
+                    <option value="<?= h($valeur) ?>" <?= $resource->status === $valeur ? 'selected' : '' ?>>
                         <?= h($libelle) ?>
                     </option>
                 <?php endforeach; ?>
@@ -59,7 +64,7 @@ $flash = get_flash();
 
         <label>
             Emprunteur
-            <input type="text" name="borrower" value="<?= h($resource['borrower']) ?>">
+            <input type="text" name="borrower" value="<?= h($resource->borrower) ?>">
         </label>
 
         <button type="submit">Mettre à jour</button>

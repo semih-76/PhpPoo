@@ -1,21 +1,31 @@
 <?php
 
-namespace src;
+namespace App;
 
 use PDO;
 
 class Database
 {
-    private PDO $connection;
-        public function __construct(array $config){
-            $dsn = sprintf("mysql:host=%s;dbname=%s", $config['host'], $config['mediatheque']);
-            $this->connection = new PDO($dsn, $config['username'], $config['password'],
+    private static ?PDO $instance = null;
 
-    [   PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC    ]
+    public static function getInstance(): PDO
+    {
+        if (self::$instance === null) {
+            $config = require __DIR__ . '/../config/database.php';
+
+            $dsn = sprintf(
+                'mysql:host=%s;dbname=%s;charset=utf8mb4',
+                $config['host'],
+                $config['database']
             );
+
+            self::$instance = new PDO($dsn, $config['username'], $config['password'], [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]);
         }
-    public function getConnection(): PDO {
-        return $this->connection;
+        return self::$instance;
     }
+
+    private function __construct() {}
 }

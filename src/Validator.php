@@ -1,12 +1,12 @@
 <?php
 
-namespace src;
+namespace App;
 
 class Validator
 {
     public static function resource(array $data): array {
         $errors = [];
-        $allowedStatuses = ['disponible', 'emprunte', 'maitenance'];
+        $allowedStatuses = ['disponible', 'emprunte', 'maintenance'];
         if (trim($data['title'] ?? '') === '') {
             $errors[] = 'Le titre est obligatoire.';
         }

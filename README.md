@@ -17,7 +17,7 @@ Application web de gestion de ressources (livres, DVD, etc.) permettant d'ajoute
 1. Cloner le projet dans le dossier de ton serveur local (`htdocs` pour XAMPP, `www` pour Laragon) :
 
 ```bash
-git clone https://github.com/semih-76/mediatheque.git
+git clone https://github.com/semih-76/PhpPoo.git
 ```
 
 2. Créer la base de données et la table en exécutant le script SQL suivant dans phpMyAdmin ou ton client MySQL :
@@ -91,6 +91,7 @@ mediatheque/
 └── assets/
     └── style.css
 ```
+L
 
 ---
 

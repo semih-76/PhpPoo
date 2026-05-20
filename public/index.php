@@ -63,6 +63,4 @@ $flash = get_flash();
             </tbody>
         </table>
     <?php endif; ?>
-</main>
-</body>
-</html>
+<?php require __DIR__ . '/../views/partials/footer.php'; ?>
